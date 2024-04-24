@@ -22,7 +22,7 @@ def main(page: Page):
     def route_change(route):
         # Borramos las vistas si hubiera alguna
         page.views.clear()
-        #Creramos las variables para las fechas
+        # Creamos las variables para las fechas
         date_init = date_picker
         date_finish = date_picker
         # Anadimos los DatePicker en forma overlay
@@ -58,8 +58,7 @@ def main(page: Page):
                 ft.View(
                     "/producto",
                     [
-                        AppBar(title=Text("Añadir Producto"),
-                               bgcolor=colors.RED_300),
+                        AppBar(title=Text("Añadir Producto"), bgcolor=colors.RED_300),
                         ElevatedButton(
                             "Go Home",
                             bgcolor=colors.RED_300,
