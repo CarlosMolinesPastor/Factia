@@ -23,8 +23,8 @@ def main(page: Page):
         # Borramos las vistas si hubiera alguna
         page.views.clear()
         # Anadimos los DatePicker en forma overlay
-        dateInit = date_picker
-        dateFinish = date_picker
+        date_init = date_picker
+        date_finish = date_picker
         page.overlay.append(date_picker)
         # HOME
         # Anadimos la vista principal con la ruta slash y añadimos los controles de la pagina: un appbar
@@ -57,7 +57,8 @@ def main(page: Page):
                 ft.View(
                     "/producto",
                     [
-                        AppBar(title=Text("Añadir Producto"), bgcolor=colors.RED_300),
+                        AppBar(title=Text("Añadir Producto"),
+                               bgcolor=colors.RED_300),
                         ElevatedButton(
                             "Go Home",
                             bgcolor=colors.RED_300,
@@ -84,14 +85,14 @@ def main(page: Page):
                             bgcolor=colors.RED_300,
                             color=colors.WHITE,
                             icon=ft.icons.CALENDAR_MONTH,
-                            on_click=lambda _: dateInit.pick_date(),
+                            on_click=lambda _: date_init.pick_date(),
                         ),
                         ElevatedButton(
                             "Selecciona fecha Segunda",
                             bgcolor=colors.RED_300,
                             color=colors.WHITE,
                             icon=ft.icons.CALENDAR_MONTH,
-                            on_click=lambda _: dateFinish.pick_date(),
+                            on_click=lambda _: date_finish.pick_date(),
                         ),
                         ElevatedButton(
                             "Go Home",
@@ -123,7 +124,7 @@ def main(page: Page):
     page.on_view_pop = view_pop
     page.go(page.route)
 
-    ##Date picker
+    # Date picker
     def change_date(e):
         print(f"Date picker changed, value is {date_picker.value}")
 
