@@ -22,9 +22,10 @@ def main(page: Page):
     def route_change(route):
         # Borramos las vistas si hubiera alguna
         page.views.clear()
-        # Anadimos los DatePicker en forma overlay
+        #Creramos las variables para las fechas
         date_init = date_picker
         date_finish = date_picker
+        # Anadimos los DatePicker en forma overlay
         page.overlay.append(date_picker)
         # HOME
         # Anadimos la vista principal con la ruta slash y añadimos los controles de la pagina: un appbar
