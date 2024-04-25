@@ -29,9 +29,12 @@ def main(page: Page):
         page.overlay.append(date_picker)
         # HOME
         # Anadimos la vista principal con la ruta slash y añadimos los controles de la pagina: un appbar
+        # y dos botones elevados, uno para añadir productos y otro para buscar por fecha
         page.views.append(
+            # Creamos la vista con la ruta slash
             ft.View(
                 "/",
+                # Añadimos los controles de la pagina
                 [
                     AppBar(title=Text("Factia"), bgcolor=colors.RED_300),
                     ElevatedButton(
@@ -47,12 +50,14 @@ def main(page: Page):
                         on_click=lambda _: page.go("/busqueda"),
                     ),
                 ],
+                # Alineamos los controles en el centro de la pagina
                 vertical_alignment=MainAxisAlignment.CENTER,
                 horizontal_alignment=CrossAxisAlignment.CENTER,
                 spacing=24,
             )
         )
         # PRODUCTO
+        # Si la ruta es /producto añadimos la vista con el AppBar y un botón para volver a la vista anterior
         if page.route == "/producto":
             page.views.append(
                 ft.View(
@@ -71,7 +76,8 @@ def main(page: Page):
                     spacing=24,
                 )
             )
-
+        # BUSQUEDA
+        # Si la ruta es /busqueda añadimos la vista con el AppBar y tres botones para seleccionar fechas y volver a la vista anterio
         if page.route == "/busqueda":
             page.views.append(
                 ft.View(
@@ -124,18 +130,19 @@ def main(page: Page):
     page.on_view_pop = view_pop
     page.go(page.route)
 
-    # Date picker
+    # Date picker para seleccionar fechas
+    # Creamos dos funciones para cambiar la fecha y para cerrar el date picker
     def change_date(e):
         print(f"Date picker changed, value is {date_picker.value}")
 
     def date_picker_dismissed(e):
         print(f"Date picker dismissed, value is {date_picker.value}")
-
+    # Creamos el date picker con las fechas de inicio y fin
     date_picker = DatePicker(
         on_change=change_date,
         on_dismiss=date_picker_dismissed,
         first_date=datetime.datetime(2020, 10, 1),
-        last_date=datetime.datetime(2024, 10, 1),
+        last_date=datetime.datetime(2050, 10, 1),
     )
 
 
