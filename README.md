@@ -1,9 +1,16 @@
-# A factia Flet app
+![Factia Icon](https://github.com/CarlosMolinesPastor/Factia/blob/main/assets/icon.png)
+# A Factia Flet app
 
-An example of a minimal Flet app.
+## Create a environment
+mkdir Factia
+cd Factia
+python3 -m venv .venv
+source .venv/bin/activate
+pip install flet
 
-To run the app:
+## Clone the repository:
+git clone https://github.com/CarlosMolinesPastor/Factia.git
 
-```
-flet run [app_directory]
+## To run the app:
+flet run Factia
 ```
