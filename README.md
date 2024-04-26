@@ -1,15 +1,22 @@
-<center>[Factia Icon](https://github.com/CarlosMolinesPastor/Factia/blob/main/assets/icon.png)</center>
+<p align="center">
+<img src="https://github.com/CarlosMolinesPastor/Factia/blob/main/assets/icon.png"> 
+</p>
+                                                                                                  
+<h1 align="center">A Factia flet app</h1>
 
-# <center>A Factia flet app</center>
-
+                 
 ## Create a environment
-```mkdir Factia
+
+```
+mkdir Factia
 cd Factia
 python3 -m venv .venv
 source .venv/bin/activate
-pip install flet```
+pip install flet
+```
 
 ## Clone the repository:
+
 ```git clone https://github.com/CarlosMolinesPastor/Factia.git```
 
 ## To run the app:
