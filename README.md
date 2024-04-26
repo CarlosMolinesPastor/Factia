@@ -26,6 +26,7 @@ pip install flet
 <h2>Status</h2>
 <a href="https://github.com/CarlosMolinesPastor/Factia/releases/"><img src="https://img.shields.io/github/tag/CarlosMolinesPastor/Factia?include_prereleases=&sort=semver&color=blue" alt="GitHub tag"></a>
 <a href="#license"><img src="https://img.shields.io/badge/License-GPL3-blue" alt="License"></a>
+
 ![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green)
 
 
