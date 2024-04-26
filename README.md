@@ -22,11 +22,12 @@ pip install flet
 ## To run the app:
 
 ```flet run Factia```
-![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green)
 
 <h2>Status</h2>
 <a href="https://github.com/CarlosMolinesPastor/Factia/releases/"><img src="https://img.shields.io/github/tag/CarlosMolinesPastor/Factia?include_prereleases=&sort=semver&color=blue" alt="GitHub tag"></a>
 <a href="#license"><img src="https://img.shields.io/badge/License-GPL3-blue" alt="License"></a>
+![Badge en Desarollo](https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green)
+
 
 <h2>License</h2>
 Released under <a href="/LICENSE">GPL3</a> by <a href="https://github.com/CarlosMolinesPastor">@CarlosMolinesPastor</a>.
