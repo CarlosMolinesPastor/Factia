@@ -1,5 +1,6 @@
-![Factia Icon](https://github.com/CarlosMolinesPastor/Factia/blob/main/assets/icon.png)
-# A Factia Flet app
+<p style = 'text-align:center;'>![Factia Icon](https://github.com/CarlosMolinesPastor/Factia/blob/main/assets/icon.png)</p>
+
+# <center>A Factia flet app</center>
 
 ## Create a environment
 mkdir Factia
