@@ -48,6 +48,7 @@ def main(page: Page):
     # Creamos las variables para las fechas
     date_init = date_picker
     date_finish = date_picker
+    date_buy = date_picker
     # Anadimos los DatePicker en forma overlay
     page.overlay.append(date_picker)
 
@@ -68,6 +69,10 @@ def main(page: Page):
 
     # Creamos un anchor para seleccionar la categoria
     anchor = SearchBar(
+        full_screen=True,
+        view_trailing=[
+          FloatingActionButton(icon=icons.ADD, bgcolor=colors.RED_300, on_click=lambda _: anchor.close_view()),
+        ],
         view_elevation=4,
         divider_color=ft.colors.RED_300,
         bar_hint_text="Elige Categoria...",
@@ -79,7 +84,6 @@ def main(page: Page):
             ft.ListTile(title=Text(f"Categoria {i}"), on_click=close_anchor, data=i)
             for i in range(10)
         ],
-
     )
 
     radio_button = RadioGroup(content=ft.Column([
@@ -140,26 +144,15 @@ def main(page: Page):
                     "/producto",
                     [
                         AppBar(title=Text("Añadir Producto"), bgcolor=colors.RED_300),
-                        ft.Row(
-                            [
-                                Text("Nombre del producto:"),
-                            ]
+                        product_name := TextField(label="Producto",border_color=colors.RED_300, text_align=ft.TextAlign.CENTER, ),
+                        ElevatedButton(
+                            "Fecha de Compra",
+                            bgcolor=colors.RED_300,
+                            color=colors.WHITE,
+                            icon=ft.icons.CALENDAR_MONTH,
+                            on_click=lambda _: date_buy.pick_date(),
                         ),
-                        product_name := TextField(border_color=colors.RED_300, text_align=ft.TextAlign.CENTER),
-                        ft.Row(
-                            [
-                                OutlinedButton(
-                                    "Categoria",
-                                    on_click=lambda _: anchor.open_view(),
-                                ),
-                                anchor,
-                                OutlinedButton(
-                                    text="+",
-                                    on_click=lambda _: anchor.open_view(),
-                                ),
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER,
-                        ),
+                        anchor,
                         Text("Tiempo de Garantia:"),
                         ft.Row([
                             radio_button,
