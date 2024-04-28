@@ -1,8 +1,5 @@
 import flet as ft
 
-# Importamos de flet para no tener que utilizar ft.
-# from flet import *
-
 # Importamos datetime
 import datetime
 
@@ -12,7 +9,7 @@ def main(page: ft.Page):
     # Formateamos la pagina
     page.title = "Factia"
     page.padding = 32
-    page.
+
     # Creamos las variables globales para despues crear el objeto producto
     # Primero creamos un TextField con el valor 0 y lo alineamos al centro
     product_name = ft.TextField(
@@ -125,7 +122,7 @@ def main(page: ft.Page):
 
     radio_button.on_change = radio_change
 
-    showDate = ft.TextField(
+    show_date = ft.TextField(
         label="Fecha de Compra",
         border_color=ft.colors.RED_300,
         text_align=ft.TextAlign.CENTER,
@@ -194,7 +191,7 @@ def main(page: ft.Page):
                                     icon=ft.icons.CALENDAR_MONTH,
                                     on_click=lambda _: date_buy.pick_date(),
                                 ),
-                                showDate,
+                                show_date,
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
