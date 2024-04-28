@@ -1,19 +1,27 @@
 import flet as ft
 
 # Importamos de flet para no tener que utilizar ft.
-from flet import *
+# from flet import *
 
 # Importamos datetime
 import datetime
 
 
-def main(page: Page):
+# Funcion principal y le pasamos la pagina
+def main(page: ft.Page):
+    # Formateamos la pagina
     page.title = "Factia"
     page.padding = 32
-
-    # Creamos una funcion para incrementar y decrementar el contador
+    page.
+    # Creamos las variables globales para despues crear el objeto producto
     # Primero creamos un TextField con el valor 0 y lo alineamos al centro
-    txt_number = TextField(value="0", text_align=TextAlign.CENTER, width=100)
+    product_name = ft.TextField(
+        label="Producto",
+        border_color=ft.colors.RED_300,
+        text_align=ft.TextAlign.CENTER,
+    )
+
+    txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=100)
 
     # Creamos dos funciones para incrementar y decrementar el contador
     def increment(e):
@@ -29,22 +37,30 @@ def main(page: Page):
         print(f"decrement {txt_number.value}")
         page.update()
 
-    ####### DATE PICKER #######
+    # ###### DATE PICKER #######
     # Creamos dos funciones para cambiar la fecha y para cerrar el date picker
     def change_date(e):
+        # Impresiones de control
         print(f"Date picker changed, value is {date_picker.value}")
         print(f"Date picker changed, value is {date_init.value.year}")
+        # Si la fecha de inicio es distinta de None le asignamos el valor
+        # al TextField de la fecha de inicio del date picker
         if date_buy.value:
-            tb.value = date_buy.value.strftime("%d/%m/%Y")
+            showDate.value = date_buy.value.strftime("%d/%m/%Y")
+            # Impresion de control
             print(f"Date ,date buy value is {date_buy.value}")
+            # Actualizamos la pagina
             page.update()
 
+    # Funcion para cerrar el date picker y le asignamos el valor
     def date_picker_dismissed(e):
         print(f"Date picker dismissed, value is {date_picker.value}")
 
     # Creamos el date picker con las fechas de inicio y fin
-    date_picker = DatePicker(
+    date_picker = ft.DatePicker(
+        # Si cambia la fecha le asignamos la funcion change_date
         on_change=change_date,
+        # Si se cierra el date picker le asignamos la funcion date_picker_dismissed
         on_dismiss=date_picker_dismissed,
         first_date=datetime.datetime(2020, 10, 1),
         last_date=datetime.datetime(2050, 10, 1),
@@ -56,7 +72,7 @@ def main(page: Page):
     # Anadimos los DatePicker en forma overlay
     page.overlay.append(date_picker)
 
-    ####### ANCHOR #######
+    # ###### ANCHOR #######
     def close_anchor(e):
         category = f"Category{e.control.data}"
         print(f"closing view from {category}")
@@ -72,28 +88,36 @@ def main(page: Page):
         print(f"handle_tap")
 
     # Creamos un anchor para seleccionar la categoria
-    anchor = SearchBar(
+    anchor = ft.SearchBar(
         full_screen=True,
         view_trailing=[
-            FloatingActionButton(icon=icons.ADD, bgcolor=colors.RED_300, on_click=lambda _: anchor.close_view()),
+            ft.FloatingActionButton(
+                icon=ft.icons.ADD,
+                bgcolor=ft.colors.RED_300,
+                on_click=lambda _: anchor.close_view(),
+            ),
         ],
         view_elevation=4,
-        divider_color=colors.RED_300,
+        divider_color=ft.colors.RED_300,
         bar_hint_text="Elige Categoria...",
         view_hint_text="Elige una categortia de las indicadas...",
         on_change=handle_change,
         on_submit=handle_submit,
         on_tap=handle_tap,
         controls=[
-            ListTile(title=Text(f"Categoria {i}"), on_click=close_anchor, data=i)
+            ft.ListTile(title=ft.Text(f"Categoria {i}"), on_click=close_anchor, data=i)
             for i in range(10)
         ],
     )
 
-    radio_button = RadioGroup(content=Column([
-        Radio("Años", value="years"),
-        Radio("Meses", value="months"),
-    ]))
+    radio_button = ft.RadioGroup(
+        content=ft.Column(
+            [
+                ft.Radio("Años", value="years"),
+                ft.Radio("Meses", value="months"),
+            ]
+        )
+    )
 
     def radio_change(e):
         print(f"radio_change {e.data}")
@@ -101,54 +125,52 @@ def main(page: Page):
 
     radio_button.on_change = radio_change
 
-    tb = TextField(
+    showDate = ft.TextField(
         label="Fecha de Compra",
-        border_color=colors.RED_300,
-        text_align=TextAlign.CENTER,
+        border_color=ft.colors.RED_300,
+        text_align=ft.TextAlign.CENTER,
         width=200,
         read_only=True,
-        value="")
+        value="",
+    )
 
-    ######## ROUTE CHANGE ########
+    # ####### ROUTE CHANGE ########
     def route_change(route):
         # Borramos las vistas si hubiera alguna
         page.views.clear()
 
-        page.theme = Theme(
-            color_scheme=ColorScheme(
-                primary=colors.RED_300)
-        )
+        page.theme = ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.RED_300))
 
-        ########  HOME ########
+        # #######  HOME ########
         # Anadimos la vista principal con la ruta slash y añadimos los controles de la pagina: un appbar
         # y dos botones elevados, uno para añadir productos y otro para buscar por fecha
         page.views.append(
             # Creamos la vista con la ruta slash
-            View(
+            ft.View(
                 "/",
                 # Añadimos los controles de la pagina
                 [
-                    AppBar(title=Text("Factia"), bgcolor=colors.RED_300),
-                    ElevatedButton(
+                    ft.AppBar(title=ft.Text("Factia"), bgcolor=ft.colors.RED_300),
+                    ft.ElevatedButton(
                         "Anadir Producto",
-                        bgcolor=colors.RED_300,
-                        color=colors.WHITE,
+                        bgcolor=ft.colors.RED_300,
+                        color=ft.colors.WHITE,
                         on_click=lambda _: page.go("/producto"),
                     ),
-                    ElevatedButton(
+                    ft.ElevatedButton(
                         "Busqueda por Fecha",
-                        bgcolor=colors.RED_300,
-                        color=colors.WHITE,
+                        bgcolor=ft.colors.RED_300,
+                        color=ft.colors.WHITE,
                         on_click=lambda _: page.go("/busqueda"),
                     ),
                 ],
                 # Alineamos los controles en el centro de la pagina
-                vertical_alignment=MainAxisAlignment.CENTER,
-                horizontal_alignment=CrossAxisAlignment.CENTER,
+                vertical_alignment=ft.MainAxisAlignment.CENTER,
+                horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                 spacing=24,
             )
         )
-        ######## PRODUCTO ########
+        # ####### PRODUCTO ########
         # Si la ruta es /producto añadimos la vista con el AppBar y un botón para volver a la vista anterior
         if page.route == "/producto":
             # Al cargar la vista si el valor del radio_button es None le asignamos el valor "years"
@@ -156,53 +178,57 @@ def main(page: Page):
                 radio_button.value = "years"
             # Añadimos la vista con el AppBar y un botón para volver a la vista anterior
             page.views.append(
-                View(
+                ft.View(
                     "/producto",
                     [
-                        AppBar(title=Text("Añadir Producto"), bgcolor=colors.RED_300),
-                        product_name := TextField(label="Producto", border_color=colors.RED_300,
-                                                  text_align=TextAlign.CENTER, ),
-                        Row([
-                            ElevatedButton(
-                                "Fecha de Compra",
-                                bgcolor=colors.RED_300,
-                                color=colors.WHITE,
-                                icon=icons.CALENDAR_MONTH,
-                                on_click=lambda _: date_buy.pick_date(),
-                            ),
-                            tb
-                        ], alignment=MainAxisAlignment.CENTER,
+                        ft.AppBar(
+                            title=ft.Text("Añadir Producto"), bgcolor=ft.colors.RED_300
                         ),
-
+                        product_name,
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Fecha de Compra",
+                                    bgcolor=ft.colors.RED_300,
+                                    color=ft.colors.WHITE,
+                                    icon=ft.icons.CALENDAR_MONTH,
+                                    on_click=lambda _: date_buy.pick_date(),
+                                ),
+                                showDate,
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
                         anchor,
-                        Text("Tiempo de Garantia:"),
-                        Row([
-                            radio_button,
-                            Row(
-                                [
-                                    IconButton(
-                                        icons.REMOVE, on_click=decrement,
-                                    ),
-                                    txt_number,
-                                    IconButton(
-                                        icons.ADD, on_click=increment,
-                                    ),
-                                ],
-                                alignment=MainAxisAlignment.CENTER,
-                            ),
-                        ],
-                            alignment=MainAxisAlignment.CENTER
+                        ft.Text("Tiempo de Garantia:"),
+                        ft.Row(
+                            [
+                                radio_button,
+                                ft.Row(
+                                    [
+                                        ft.IconButton(
+                                            ft.icons.REMOVE,
+                                            on_click=decrement,
+                                        ),
+                                        txt_number,
+                                        ft.IconButton(
+                                            ft.icons.ADD,
+                                            on_click=increment,
+                                        ),
+                                    ],
+                                    alignment=ft.MainAxisAlignment.CENTER,
+                                ),
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
                         ),
-
-                        ElevatedButton(
+                        ft.ElevatedButton(
                             "Go Home",
-                            bgcolor=colors.RED_300,
-                            color=colors.WHITE,
+                            bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
                             on_click=lambda _: page.go("/"),
                         ),
                     ],
-                    vertical_alignment=MainAxisAlignment.CENTER,
-                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                    vertical_alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=24,
                 )
             )
@@ -211,35 +237,36 @@ def main(page: Page):
         # seleccionar fechas y volver a la vista anterio
         if page.route == "/busqueda":
             page.views.append(
-                View(
+                ft.View(
                     "/busqueda",
                     [
-                        AppBar(
-                            title=Text("Busqueda de productos"), bgcolor=colors.RED_300
+                        ft.AppBar(
+                            title=ft.Text("Busqueda de productos"),
+                            bgcolor=ft.colors.RED_300,
                         ),
-                        ElevatedButton(
+                        ft.ElevatedButton(
                             "Selecciona fecha Primera",
-                            bgcolor=colors.RED_300,
-                            color=colors.WHITE,
-                            icon=icons.CALENDAR_MONTH,
+                            bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
+                            icon=ft.icons.CALENDAR_MONTH,
                             on_click=lambda _: date_init.pick_date(),
                         ),
-                        ElevatedButton(
+                        ft.ElevatedButton(
                             "Selecciona fecha Segunda",
-                            bgcolor=colors.RED_300,
-                            color=colors.WHITE,
-                            icon=icons.CALENDAR_MONTH,
+                            bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
+                            icon=ft.icons.CALENDAR_MONTH,
                             on_click=lambda _: date_finish.pick_date(),
                         ),
-                        ElevatedButton(
+                        ft.ElevatedButton(
                             "Go Home",
-                            bgcolor=colors.RED_300,
-                            color=colors.WHITE,
+                            bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
                             on_click=lambda _: page.go("/"),
                         ),
                     ],
-                    vertical_alignment=MainAxisAlignment.CENTER,
-                    horizontal_alignment=CrossAxisAlignment.CENTER,
+                    vertical_alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=24,
                 )
             )
@@ -263,4 +290,4 @@ def main(page: Page):
 
 
 # Iniciamos la app
-app(target=main, view=AppView.WEB_BROWSER)
+ft.app(target=main, view=ft.AppView.WEB_BROWSER)
