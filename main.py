@@ -2,6 +2,7 @@ import flet as ft
 
 # Importamos datetime
 import datetime
+import producto as pr
 
 
 # Funcion principal y le pasamos la pagina
@@ -15,20 +16,22 @@ def main(page: ft.Page):
     product_name = ft.TextField(
         label="Producto",
         border_color=ft.colors.RED_300,
-        text_align=ft.TextAlign.CENTER,
+        text_align=ft.TextAlign.CENTER
     )
-
+    
     txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=100)
 
-    # Creamos dos funciones para incrementar y decrementar el contador
+    # Creamos dos funciones para incrementar y decrementar el contador del tiempo de garantia
     def increment(e):
         txt_number.value = str(int(txt_number.value) + 1)
         print(f"increment {txt_number.value}")
+        date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
         page.update()
 
     def decrement(e):
         if int(txt_number.value) > 0:
             txt_number.value = str(int(txt_number.value) - 1)
+            date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
         else:
             txt_number.value = "0"
         print(f"decrement {txt_number.value}")
@@ -43,7 +46,8 @@ def main(page: ft.Page):
         # Si la fecha de inicio es distinta de None le asignamos el valor
         # al TextField de la fecha de inicio del date picker
         if date_buy.value:
-            showDate.value = date_buy.value.strftime("%d/%m/%Y")
+            show_date.value = date_buy.value.strftime("%d/%m/%Y")
+            date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
             # Impresion de control
             print(f"Date ,date buy value is {date_buy.value}")
             # Actualizamos la pagina
@@ -52,6 +56,7 @@ def main(page: ft.Page):
     # Funcion para cerrar el date picker y le asignamos el valor
     def date_picker_dismissed(e):
         print(f"Date picker dismissed, value is {date_picker.value}")
+        
 
     # Creamos el date picker con las fechas de inicio y fin
     date_picker = ft.DatePicker(
@@ -69,11 +74,12 @@ def main(page: ft.Page):
     # Anadimos los DatePicker en forma overlay
     page.overlay.append(date_picker)
 
-    # ###### ANCHOR #######
+    # ###### CATEGORIAS #######
     def close_anchor(e):
         category = f"Category{e.control.data}"
         print(f"closing view from {category}")
         anchor.close_view(category)
+        anchor.value = category
 
     def handle_change(e):
         print(f"handle_change e.data: {e.data}")
@@ -105,8 +111,11 @@ def main(page: ft.Page):
             ft.ListTile(title=ft.Text(f"Categoria {i}"), on_click=close_anchor, data=i)
             for i in range(10)
         ],
+        value="",
     )
 
+    # ###### RADIO BUTTON #######
+    # Creamos un radio button con dos opciones para seleccionar los años o los meses
     radio_button = ft.RadioGroup(
         content=ft.Column(
             [
@@ -121,7 +130,8 @@ def main(page: ft.Page):
         print(f"radio_change {radio_button.value}")
 
     radio_button.on_change = radio_change
-
+    
+    # Creamos un TextField para mostrar la fecha de compra
     show_date = ft.TextField(
         label="Fecha de Compra",
         border_color=ft.colors.RED_300,
@@ -130,6 +140,47 @@ def main(page: ft.Page):
         read_only=True,
         value="",
     )
+
+    # ####### ADD PRODUCT ########
+
+    # Funcion para calcular la fecha de garantia
+    def calculate_guarantee_date():
+        if radio_button.value == "years":
+            return date_buy.value + datetime.timedelta(days=int(txt_number.value) * 365)
+        else:
+            return date_buy.value + datetime.timedelta(days=int(txt_number.value) * 30)
+
+    date_guarantee = ft.TextField(
+        label="Fecha de Garantia",
+        border_color=ft.colors.RED_300,
+        text_align=ft.TextAlign.CENTER,
+        width=200,
+        read_only=True,
+        value="",
+    )
+    
+    
+    def var_are_valid():
+        if product_name.value != "" and date_buy.value and date_guarantee.value and anchor.value != "":
+            return True
+
+    # Funcion para añadir el producto
+    def add_product(e):
+        if var_are_valid():
+            print("Datos completos")
+            # Creamos el objeto producto con los valores de los campos
+            product = pr.Producto(
+                product_name.value,
+                anchor.value,
+                date_buy.value.strftime("%d/%m/%Y"),
+                date_guarantee.value,
+                "imagen",
+            )
+            # Imprimimos el objeto producto
+            print(product.nombre, product.categoria, product.fecha_compra, product.fecha_vencimiento_garantia, product.imagen)
+        else:
+            print("Faltan datos")
+            page.update()
 
     # ####### ROUTE CHANGE ########
     def route_change(route):
@@ -179,7 +230,7 @@ def main(page: ft.Page):
                     "/producto",
                     [
                         ft.AppBar(
-                            title=ft.Text("Añadir Producto"), bgcolor=ft.colors.RED_300
+                            title=ft.Text("Añadir Producto"), bgcolor=ft.colors.RED_300,
                         ),
                         product_name,
                         ft.Row(
@@ -192,8 +243,7 @@ def main(page: ft.Page):
                                     on_click=lambda _: date_buy.pick_date(),
                                 ),
                                 show_date,
-                            ],
-                            alignment=ft.MainAxisAlignment.CENTER,
+                            ],alignment=ft.MainAxisAlignment.CENTER,
                         ),
                         anchor,
                         ft.Text("Tiempo de Garantia:"),
@@ -214,14 +264,15 @@ def main(page: ft.Page):
                                     ],
                                     alignment=ft.MainAxisAlignment.CENTER,
                                 ),
+                                date_guarantee,
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
                         ft.ElevatedButton(
-                            "Go Home",
+                            "Añadir Producto",
                             bgcolor=ft.colors.RED_300,
                             color=ft.colors.WHITE,
-                            on_click=lambda _: page.go("/"),
+                            on_click=add_product,
                         ),
                     ],
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
@@ -286,5 +337,7 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
+
 # Iniciamos la app
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+
