@@ -4,6 +4,9 @@ import flet as ft
 import datetime
 import producto as pr
 
+import data as dt
+import os
+
 
 # Funcion principal y le pasamos la pagina
 def main(page: ft.Page):
@@ -14,11 +17,9 @@ def main(page: ft.Page):
     # Creamos las variables globales para despues crear el objeto producto
     # Primero creamos un TextField con el valor 0 y lo alineamos al centro
     product_name = ft.TextField(
-        label="Producto",
-        border_color=ft.colors.RED_300,
-        text_align=ft.TextAlign.CENTER
+        label="Producto", border_color=ft.colors.RED_300, text_align=ft.TextAlign.CENTER
     )
-    
+
     txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=100)
 
     # Creamos dos funciones para incrementar y decrementar el contador del tiempo de garantia
@@ -41,8 +42,9 @@ def main(page: ft.Page):
     # Creamos dos funciones para cambiar la fecha y para cerrar el date picker
     def change_date(e):
         # Impresiones de control
-        print(f"Date picker changed, value is {date_picker.value}")
-        print(f"Date picker changed, value is {date_init.value.year}")
+        print(f"Date picker changed, value is {date_picker_buy.value}")
+        print(f"Date picker changed, value is {date_picker_init.value}")
+        print(f"Date picker changed, value is {date_picker_finish.value}")
         # Si la fecha de inicio es distinta de None le asignamos el valor
         # al TextField de la fecha de inicio del date picker
         if date_buy.value:
@@ -52,14 +54,19 @@ def main(page: ft.Page):
             print(f"Date ,date buy value is {date_buy.value}")
             # Actualizamos la pagina
             page.update()
+        if date_init.value:
+            print(f"Date ,date init value is {date_init.value}")
+            page.update()
+        if date_finish.value:
+            print(f"Date ,date finish value is {date_finish.value}")
+            page.update()
 
     # Funcion para cerrar el date picker y le asignamos el valor
     def date_picker_dismissed(e):
         print(f"Date picker dismissed, value is {date_picker.value}")
-        
 
-    # Creamos el date picker con las fechas de inicio y fin
-    date_picker = ft.DatePicker(
+    # Creamos el date picker de la compra
+    date_picker_buy = ft.DatePicker(
         # Si cambia la fecha le asignamos la funcion change_date
         on_change=change_date,
         # Si se cierra el date picker le asignamos la funcion date_picker_dismissed
@@ -67,12 +74,33 @@ def main(page: ft.Page):
         first_date=datetime.datetime(2020, 10, 1),
         last_date=datetime.datetime(2050, 10, 1),
     )
+    # Creamos el date picker de la compra
+    date_picker_init = ft.DatePicker(
+        # Si cambia la fecha le asignamos la funcion change_date
+        on_change=change_date,
+        # Si se cierra el date picker le asignamos la funcion date_picker_dismissed
+        on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2020, 10, 1),
+        last_date=datetime.datetime(2050, 10, 1),
+    )
+    # Creamos el date picker de la compra
+    date_picker_finish = ft.DatePicker(
+        # Si cambia la fecha le asignamos la funcion change_date
+        on_change=change_date,
+        # Si se cierra el date picker le asignamos la funcion date_picker_dismissed
+        on_dismiss=date_picker_dismissed,
+        first_date=datetime.datetime(2020, 10, 1),
+        last_date=datetime.datetime(2050, 10, 1),
+    )
+
     # Creamos las variables para las fechas
-    date_init = date_picker
-    date_finish = date_picker
-    date_buy = date_picker
+    date_init = date_picker_init
+    date_finish = date_picker_finish
+    date_buy = date_picker_buy
     # Anadimos los DatePicker en forma overlay
-    page.overlay.append(date_picker)
+    page.overlay.append(date_picker_buy)
+    page.overlay.append(date_picker_init)
+    page.overlay.append(date_picker_finish)
 
     # ###### CATEGORIAS #######
     def close_anchor(e):
@@ -126,11 +154,14 @@ def main(page: ft.Page):
     )
 
     def radio_change(e):
+        if date_guarantee.value:
+            date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
+            page.update()
         print(f"radio_change {e.data}")
         print(f"radio_change {radio_button.value}")
 
     radio_button.on_change = radio_change
-    
+
     # Creamos un TextField para mostrar la fecha de compra
     show_date = ft.TextField(
         label="Fecha de Compra",
@@ -145,10 +176,17 @@ def main(page: ft.Page):
 
     # Funcion para calcular la fecha de garantia
     def calculate_guarantee_date():
-        if radio_button.value == "years":
-            return date_buy.value + datetime.timedelta(days=int(txt_number.value) * 365)
+        if date_buy.value is None:
+            return datetime.datetime.now()
         else:
-            return date_buy.value + datetime.timedelta(days=int(txt_number.value) * 30)
+            if radio_button.value == "years":
+                return date_buy.value + datetime.timedelta(
+                    days=int(txt_number.value) * 365
+                )
+            else:
+                return date_buy.value + datetime.timedelta(
+                    days=int(txt_number.value) * 30
+                )
 
     date_guarantee = ft.TextField(
         label="Fecha de Garantia",
@@ -158,15 +196,22 @@ def main(page: ft.Page):
         read_only=True,
         value="",
     )
-    
-    
+
     def var_are_valid():
-        if product_name.value != "" and date_buy.value and date_guarantee.value and anchor.value != "":
+        if (
+                product_name.value != ""
+                and date_buy.value
+                and date_guarantee.value
+                and anchor.value != ""
+        ):
             return True
 
     # Funcion para añadir el producto
     def add_product(e):
         if var_are_valid():
+            if not os.path.exists("data"):
+                dt.data_path()
+            dt.create_table()
             print("Datos completos")
             # Creamos el objeto producto con los valores de los campos
             product = pr.Producto(
@@ -174,10 +219,24 @@ def main(page: ft.Page):
                 anchor.value,
                 date_buy.value.strftime("%d/%m/%Y"),
                 date_guarantee.value,
-                "imagen",
+                "Inagen",
             )
             # Imprimimos el objeto producto
-            print(product.nombre, product.categoria, product.fecha_compra, product.fecha_vencimiento_garantia, product.imagen)
+            print(
+                product.nombre,
+                product.categoria,
+                product.fecha_compra,
+                product.fecha_vencimiento_garantia,
+                product.imagen,
+            )
+            # Añadimos el producto a la base de datos
+            dt.add_product(
+                product.nombre,
+                product.categoria,
+                product.fecha_compra,
+                product.fecha_vencimiento_garantia,
+                product.imagen,
+            )
         else:
             print("Faltan datos")
             page.update()
@@ -230,7 +289,8 @@ def main(page: ft.Page):
                     "/producto",
                     [
                         ft.AppBar(
-                            title=ft.Text("Añadir Producto"), bgcolor=ft.colors.RED_300,
+                            title=ft.Text("Añadir Producto"),
+                            bgcolor=ft.colors.RED_300,
                         ),
                         product_name,
                         ft.Row(
@@ -243,7 +303,8 @@ def main(page: ft.Page):
                                     on_click=lambda _: date_buy.pick_date(),
                                 ),
                                 show_date,
-                            ],alignment=ft.MainAxisAlignment.CENTER,
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
                         ),
                         anchor,
                         ft.Text("Tiempo de Garantia:"),
@@ -337,7 +398,5 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
-
 # Iniciamos la app
 ft.app(target=main, view=ft.AppView.WEB_BROWSER)
-
