@@ -63,7 +63,7 @@ def main(page: ft.Page):
 
     # Funcion para cerrar el date picker y le asignamos el valor
     def date_picker_dismissed(e):
-        print(f"Date picker dismissed, value is {ft.date_picker.value}")
+        print("Date picker dismissed")
 
     # Creamos el date picker de la compra
     date_picker_buy = ft.DatePicker(
