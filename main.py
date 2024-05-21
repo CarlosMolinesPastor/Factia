@@ -1,9 +1,13 @@
+# Importamos el modulo flet
 import flet as ft
 
 # Importamos datetime
 import datetime
+
+# Importamos el modulo producto
 import producto as pr
 
+# Importamos el modulo data de base de datos
 import data as dt
 import os
 
@@ -20,13 +24,19 @@ def main(page: ft.Page):
         label="Producto", border_color=ft.colors.RED_300, text_align=ft.TextAlign.CENTER
     )
 
+    # ###### INCREMENTAR Y DECREMENTAR #######
+    # Creamos un TextField con el valor 0 y lo alineamos al centro
     txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=100)
 
     # Creamos dos funciones para incrementar y decrementar el contador del tiempo de garantia
     def increment(e):
+        # sumamos 1 al valor del TextField
         txt_number.value = str(int(txt_number.value) + 1)  # type: ignore
+        # Mostranmos el valor del TextField
         print(f"increment {txt_number.value}")
+        # Calculamos la fecha de garantia
         date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
+        # Actualizamos la pagina
         page.update()
 
     def decrement(e):
