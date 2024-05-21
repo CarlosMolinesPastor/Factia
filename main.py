@@ -24,14 +24,14 @@ def main(page: ft.Page):
 
     # Creamos dos funciones para incrementar y decrementar el contador del tiempo de garantia
     def increment(e):
-        txt_number.value = str(int(txt_number.value) + 1)
+        txt_number.value = str(int(txt_number.value) + 1)  # type: ignore
         print(f"increment {txt_number.value}")
         date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
         page.update()
 
     def decrement(e):
-        if int(txt_number.value) > 0:
-            txt_number.value = str(int(txt_number.value) - 1)
+        if int(txt_number.value) > 0:  # type: ignore
+            txt_number.value = str(int(txt_number.value) - 1)  # type: ignore
             date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
         else:
             txt_number.value = "0"
@@ -116,7 +116,7 @@ def main(page: ft.Page):
         print(f"handle_submit e.data: {e.data}")
 
     def handle_tap(e):
-        print(f"handle_tap")
+        print("handle_tap")
 
     # Creamos un anchor para seleccionar la categoria
     anchor = ft.SearchBar(
@@ -181,11 +181,11 @@ def main(page: ft.Page):
         else:
             if radio_button.value == "years":
                 return date_buy.value + datetime.timedelta(
-                    days=int(txt_number.value) * 365
+                    days=int(txt_number.value) * 365  # type: ignore
                 )
             else:
                 return date_buy.value + datetime.timedelta(
-                    days=int(txt_number.value) * 30
+                    days=int(txt_number.value) * 30  # type: ignore
                 )
 
     date_guarantee = ft.TextField(
@@ -199,10 +199,10 @@ def main(page: ft.Page):
 
     def var_are_valid():
         if (
-                product_name.value != ""
-                and date_buy.value
-                and date_guarantee.value
-                and anchor.value != ""
+            product_name.value != ""
+            and date_buy.value
+            and date_guarantee.value
+            and anchor.value != ""
         ):
             return True
 
@@ -217,7 +217,7 @@ def main(page: ft.Page):
             product = pr.Producto(
                 product_name.value,
                 anchor.value,
-                date_buy.value.strftime("%d/%m/%Y"),
+                date_buy.value.strftime("%d/%m/%Y"),  # type: ignore
                 date_guarantee.value,
                 "Inagen",
             )
