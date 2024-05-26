@@ -113,12 +113,14 @@ def main(page: ft.Page):
     page.overlay.append(date_picker_finish)
 
     # ###### CATEGORIAS #######
+    # Funcion para cerrar la vista de la categoria
     def close_anchor(e):
         category = f"Category{e.control.data}"
         print(f"closing view from {category}")
         anchor.close_view(category)
         anchor.value = category
 
+    # Funcion para cambiar la categoria
     def handle_change(e):
         print(f"handle_change e.data: {e.data}")
 
@@ -135,6 +137,7 @@ def main(page: ft.Page):
             ft.FloatingActionButton(
                 icon=ft.icons.ADD,
                 bgcolor=ft.colors.RED_300,
+                # De momento si clicamos en el boton cerramos la vista ******
                 on_click=lambda _: anchor.close_view(),
             ),
         ],
@@ -142,9 +145,13 @@ def main(page: ft.Page):
         divider_color=ft.colors.RED_300,
         bar_hint_text="Elige Categoria...",
         view_hint_text="Elige una categortia de las indicadas...",
+        # Si cambia la categoria le asignamos la funcion handle_change
         on_change=handle_change,
+        # Si clicamos en el boton le asignamos la funcion handle_submit
         on_submit=handle_submit,
+        # Si clicamos en la categoria le asignamos la funcion handle_tap
         on_tap=handle_tap,
+        # Anadimos las categorias
         controls=[
             ft.ListTile(title=ft.Text(f"Categoria {i}"), on_click=close_anchor, data=i)
             for i in range(10)
