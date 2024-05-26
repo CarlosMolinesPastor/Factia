@@ -133,17 +133,22 @@ def main(page: ft.Page):
     def handle_tap(e):
         print("handle_tap")
 
+    # Funcion para listar las categorias
     def list_category():
+        # Obtenemos todas las categorias de la base de datos
         categories = dt.get_all_categories()
         print(categories)
+        # Creamos una lista con las categorias
         lista = [i[0] for i in categories]
         print(lista)
+        # Devolvemos la lista
         return lista
 
+    # Funcion para añadir la categoria
     def add_category(category):
         # Añadimos la categoria a la base de datos
         dt.add_category(category)
-        # Añadimos la categoria al anchor
+        # Añadimos la categoria al anchor para actualizar la vista
         anchor.controls.append(
             ft.ListTile(
                 title=ft.Text(category),
@@ -163,7 +168,7 @@ def main(page: ft.Page):
             ft.FloatingActionButton(
                 icon=ft.icons.ADD,
                 bgcolor=ft.colors.RED_300,
-                # Si clicamos en el boton le asignamos la funcion lambda con la categoria
+                # Si clicamos en el boton añadimos la categoria
                 on_click=lambda _: add_category(anchor.value),
             ),
         ],
