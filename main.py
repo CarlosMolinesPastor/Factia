@@ -115,7 +115,9 @@ def main(page: ft.Page):
     # ###### CATEGORIAS #######
     # Funcion para cerrar la vista de la categoria
     def close_anchor(e):
-        category = f"Category{e.control.data}"
+        # Mostramos la categoria sin los parentesis y la coma,
+        # es decir si la categoria es ('categoria',) la mostramos como categoria
+        category = e.control.data
         print(f"closing view from {category}")
         anchor.close_view(category)
         anchor.value = category
@@ -123,12 +125,36 @@ def main(page: ft.Page):
     # Funcion para cambiar la categoria
     def handle_change(e):
         print(f"handle_change e.data: {e.data}")
+        page.update()
 
     def handle_submit(e):
         print(f"handle_submit e.data: {e.data}")
 
     def handle_tap(e):
         print("handle_tap")
+
+    def list_category():
+        categories = dt.get_all_categories()
+        print(categories)
+        lista = [i[0] for i in categories]
+        print(lista)
+        return lista
+
+    def add_category(category):
+        # Añadimos la categoria a la base de datos
+        dt.add_category(category)
+        # Añadimos la categoria al anchor
+        anchor.controls.append(
+            ft.ListTile(
+                title=ft.Text(category),
+                on_click=close_anchor,
+                data=(category),
+            )
+        )
+        # Actualizamos el anchor\
+        anchor.update()
+        # Cerramos la vista de la categoria
+        anchor.close_view(category)
 
     # Creamos un anchor para seleccionar la categoria
     anchor = ft.SearchBar(
@@ -137,8 +163,8 @@ def main(page: ft.Page):
             ft.FloatingActionButton(
                 icon=ft.icons.ADD,
                 bgcolor=ft.colors.RED_300,
-                # De momento si clicamos en el boton cerramos la vista ******
-                on_click=lambda _: anchor.close_view(),
+                # Si clicamos en el boton le asignamos la funcion lambda con la categoria
+                on_click=lambda _: add_category(anchor.value),
             ),
         ],
         view_elevation=4,
@@ -153,8 +179,14 @@ def main(page: ft.Page):
         on_tap=handle_tap,
         # Anadimos las categorias
         controls=[
-            ft.ListTile(title=ft.Text(f"Categoria {i}"), on_click=close_anchor, data=i)
-            for i in range(10)
+            # Creamos una lista de categorias de la base de datos
+            # y le asignamos la funcion close_anchor
+            ft.ListTile(
+                title=ft.Text(categoria),
+                on_click=close_anchor,
+                data=(categoria),
+            )
+            for categoria in list_category()
         ],
         value="",
     )
@@ -226,9 +258,6 @@ def main(page: ft.Page):
     # Funcion para añadir el producto
     def add_product(e):
         if var_are_valid():
-            if not os.path.exists("data"):
-                dt.data_path()
-            dt.create_table()
             print("Datos completos")
             # Creamos el objeto producto con los valores de los campos
             product = pr.Producto(
@@ -260,6 +289,10 @@ def main(page: ft.Page):
 
     # ####### ROUTE CHANGE ########
     def route_change(route):
+        if not os.path.exists("data"):
+            dt.data_path()
+        dt.create_table()
+        dt.create_category_table()
         # Borramos las vistas si hubiera alguna
         page.views.clear()
 
