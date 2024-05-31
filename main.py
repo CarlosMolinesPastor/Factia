@@ -12,13 +12,13 @@ import data as dt
 import os
 
 
-# Funcion principal y le pasamos la pagina
+# Función principal y le pasamos la pagina
 def main(page: ft.Page):
     # Formateamos la pagina
     page.title = "Factia"
     page.padding = 32
 
-    # Creamos las variables globales para despues crear el objeto producto
+    # Creamos las variables globales para después crear el objeto producto
     # Primero creamos un TextField con el valor 0 y lo alineamos al centro
     product_name = ft.TextField(
         label="Producto", border_color=ft.colors.RED_300, text_align=ft.TextAlign.CENTER
@@ -28,13 +28,13 @@ def main(page: ft.Page):
     # Creamos un TextField con el valor 0 y lo alineamos al centro
     txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=100)
 
-    # Creamos dos funciones para incrementar y decrementar el contador del tiempo de garantia
+    # Creamos dos funciones para incrementar y decrementar el contador del tiempo de garantía
     def increment(e):
         # sumamos 1 al valor del TextField
         txt_number.value = str(int(txt_number.value) + 1)  # type: ignore
-        # Mostranmos el valor del TextField
+        # Mostramos el valor del TextField
         print(f"increment {txt_number.value}")
-        # Calculamos la fecha de garantia
+        # Calculamos la fecha de garantía
         date_guarantee.value = calculate_guarantee_date().strftime("%d/%m/%Y")
         # Actualizamos la pagina
         page.update()
@@ -71,7 +71,7 @@ def main(page: ft.Page):
             print(f"Date ,date finish value is {date_finish.value}")
             page.update()
 
-    # Funcion para cerrar el date picker y le asignamos el valor
+    # Función para cerrar el date picker y le asignamos el valor
     def date_picker_dismissed(e):
         print("Date picker dismissed")
 
