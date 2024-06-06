@@ -26,7 +26,6 @@ def create_table():
             "imagen TEXT)"
         )
         conn.commit()
-        print("Table created")
         cur.close()
 
 
@@ -40,7 +39,6 @@ def create_category_table():
         cur = conn.cursor()
         cur.execute("CREATE TABLE category (id INTEGER PRIMARY KEY, " "category TEXT)")
         conn.commit()
-        print("Table created")
         cur.close()
 
 
@@ -90,7 +88,6 @@ def add_category(category):
         conn.commit()
     else:
         print("La categoria ya existe")
-
     cur.close()
 
 
@@ -103,9 +100,8 @@ def get_all_categories():
     else:
         conn = sqlite3.connect("data/categories.db")
         cur = conn.cursor()
-        # Devuelve todas las categorias, pero solo el nombre
-        # (no el id)
-        cur.execute("SELECT category FROM category")
+        # Devuelve las categorias ordenadas alfabeticamente
+        cur.execute("SELECT category FROM category ORDER BY category ASC")
         categories = cur.fetchall()
         cur.close()
         return categories
