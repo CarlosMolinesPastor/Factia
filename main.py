@@ -294,6 +294,14 @@ def main(page: ft.Page):
                 product.fecha_vencimiento_garantia,
                 product.imagen,
             )
+            # Ponemos los campos a 0
+            product_name.value = ""
+            show_date.value = ""
+            anchor.value = ""
+            txt_number.value = "0"
+            date_guarantee.value = ""
+            # Actualizamos la pagina
+            page.update()
         else:
             print("Faltan datos")
             page.update()
