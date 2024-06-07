@@ -7,6 +7,7 @@
 #
 # Importamos el modulo flet
 import flet as ft
+import pyclbr # Importamos pyclbr
 
 # Importamos datetime
 import datetime
@@ -322,6 +323,8 @@ def main(page: ft.Page):
                     bgcolor=ft.colors.RED_300,
                     border=ft.border.all(1, ft.colors.RED_300),
                     border_radius=ft.border_radius.all(5),
+                    # Al pulsar largo suprimimos el producto
+                    # on_long_press=lambda _: dt.delete_product(product[0]),
                     on_long_press=lambda _: print("Long press"),
                 )
             )
