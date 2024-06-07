@@ -307,6 +307,27 @@ def main(page: ft.Page):
             print("Faltan datos")
             page.update()
 
+    ## Funcion para crear lista de productos
+    def create_list_products():
+        products = dt.get_all_products()
+        # add ListView to a page first
+        lv = ft.ListView(expand=1, spacing=10, item_extent=50, auto_scroll=True)
+        for product in products:
+            lv.controls.append(
+                ft.Container(
+                    ft.Text(
+                        f"Producto: {product[1]} Categoria: {product[2]} Fecha Compra: {product[3]} Fecha Garantia: {product[4]} \nImagen: {product[5]}",
+                        color=ft.colors.WHITE,
+                    ),
+                    bgcolor=ft.colors.RED_300,
+                    border=ft.border.all(1, ft.colors.RED_300),
+                    border_radius=ft.border_radius.all(5),
+                    on_long_press=lambda _: print("Long press"),
+                )
+            )
+            page.update()
+        return lv
+
     # ####### ROUTE CHANGE ########
     def route_change(route):
         if not os.path.exists("data"):
@@ -361,6 +382,12 @@ def main(page: ft.Page):
                         ft.AppBar(
                             title=ft.Text("Añadir Producto"),
                             bgcolor=ft.colors.RED_300,
+                            actions=[
+                                ft.IconButton(
+                                    ft.icons.CHECKLIST,
+                                    on_click=lambda _: page.go("/lista"),
+                                )
+                            ],
                         ),
                         product_name,
                         ft.Row(
@@ -436,6 +463,33 @@ def main(page: ft.Page):
                             color=ft.colors.WHITE,
                             icon=ft.icons.CALENDAR_MONTH,
                             on_click=lambda _: date_finish.pick_date(),
+                        ),
+                        ft.ElevatedButton(
+                            "Go Home",
+                            bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
+                            on_click=lambda _: page.go("/"),
+                        ),
+                    ],
+                    vertical_alignment=ft.MainAxisAlignment.CENTER,
+                    horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+                    spacing=24,
+                )
+            )
+        if page.route == "/lista":
+            page.views.append(
+                ft.View(
+                    "/lista",
+                    [
+                        ft.AppBar(
+                            title=ft.Text("Lista de productos"),
+                            bgcolor=ft.colors.RED_300,
+                        ),
+                        create_list_products(),
+                        ft.ListTile(
+                            title=ft.Text("Productos"),
+                            on_click=lambda _: page.go("/lista"),
+                            data=create_list_products(),
                         ),
                         ft.ElevatedButton(
                             "Go Home",
