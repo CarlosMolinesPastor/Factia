@@ -7,7 +7,6 @@
 #
 # Importamos el modulo flet
 import flet as ft
-import pyclbr # Importamos pyclbr
 
 # Importamos datetime
 import datetime
