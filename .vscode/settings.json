@@ -1,3 +1,5 @@
 {
-  "cSpell.language": "en,es-ES"
+  "cSpell.language": "en,es-ES",
+  "localaipilot.standalone.ollamaModel": "starcoder2:3b",
+  "localaipilot.standalone.ollamaCodeModel": "starcoder2:3b"
 }

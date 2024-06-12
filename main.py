@@ -16,7 +16,6 @@ import producto as pr
 
 # Importamos el modulo data de base de datos
 import data as dt
-import os
 
 
 # Función principal y le pasamos la pagina
