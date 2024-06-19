@@ -11,7 +11,7 @@ def data_path():
 # Si no existe la base de datos, la crea
 def create_table():
     if os.path.exists("data/factia.db"):
-        print("Table already exists")
+        print("Table factia already exists")
         return
     else:
         conn = sqlite3.connect("data/factia.db")
@@ -31,11 +31,11 @@ def create_table():
 
 def create_category_table():
     if os.path.exists("data/categories.db"):
-        print("Table already exists")
+        print("Table categories already exists")
         return
     else:
         conn = sqlite3.connect("data/categories.db")
-        print("Database blank created")
+        print("Base de datos creada categories.db")
         cur = conn.cursor()
         cur.execute("CREATE TABLE category (id INTEGER PRIMARY KEY, " "category TEXT)")
         conn.commit()
