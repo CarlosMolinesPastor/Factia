@@ -17,6 +17,9 @@ import producto as pr
 # Importamos el modulo data de base de datos
 import data as dt
 
+# Importamos el modulo os
+import os
+
 
 # Función principal y le pasamos la pagina
 def main(page: ft.Page):
@@ -31,6 +34,7 @@ def main(page: ft.Page):
     )
 
     # ###### INCREMENTAR Y DECREMENTAR #######
+
     # Creamos un TextField con el valor 0 y lo alineamos al centro
     txt_number = ft.TextField(value="0", text_align=ft.TextAlign.CENTER, width=100)
 
@@ -55,6 +59,7 @@ def main(page: ft.Page):
         page.update()
 
     # ###### DATE PICKER #######
+
     # Creamos dos funciones para cambiar la fecha y para cerrar el date picker
     def change_date(e):
         # Impresiones de control
@@ -114,11 +119,12 @@ def main(page: ft.Page):
     date_finish = date_picker_finish
     date_buy = date_picker_buy
     # Anadimos los DatePicker en forma overlay
-    page.overlay.append(date_picker_buy)
     page.overlay.append(date_picker_init)
     page.overlay.append(date_picker_finish)
+    page.overlay.append(date_picker_buy)
 
     # ###### CATEGORIAS #######
+
     # Funcion para cerrar la vista de la categoria
     def close_anchor(e):
         # Mostramos la categoria sin los parentesis y la coma,
@@ -203,6 +209,7 @@ def main(page: ft.Page):
     )
 
     # ###### RADIO BUTTON #######
+
     # Creamos un radio button con dos opciones para seleccionar los años o los meses
     radio_button = ft.RadioGroup(
         content=ft.Column(
@@ -248,6 +255,7 @@ def main(page: ft.Page):
                     days=int(txt_number.value) * 30  # type: ignore
                 )
 
+    # Creamos un TextField para mostrar la fecha de garantia
     date_guarantee = ft.TextField(
         label="Fecha de Garantia",
         border_color=ft.colors.RED_300,
@@ -257,6 +265,7 @@ def main(page: ft.Page):
         value="",
     )
 
+    # Funcion para validar los campos
     def var_are_valid():
         if (
             product_name.value != ""
@@ -268,6 +277,7 @@ def main(page: ft.Page):
 
     # Funcion para añadir el producto
     def add_product(e):
+        # Validamos los campos
         if var_are_valid():
             print("Datos completos")
             # Creamos el objeto producto con los valores de los campos
@@ -329,18 +339,57 @@ def main(page: ft.Page):
             page.update()
         return lv
 
+    ########### IMAGEN ###########
+
+    ## Funcion para elegir la imagen del producto
+    def pick_files_result(e: ft.FilePickerResultEvent):
+        selected_files.value = (
+            ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
+        )
+        selected_files.update()
+        actualizar_imagen()
+        upload_files(e)
+
+    def upload_files(e):
+        uf = []
+        if file_picker.result is not None and file_picker.result.files is not None:
+            for f in file_picker.result.files:
+                uf.append(
+                    ft.FilePickerUploadFile(
+                        f.name,
+                        upload_url=page.get_upload_url(f.name, 600),
+                    )
+                )
+            file_picker.upload(uf)
+
+    file_picker = ft.FilePicker(on_result=pick_files_result)
+    page.overlay.append(file_picker)
+    selected_files = ft.Text()
+
+    # Imagen por defecto
+
+    img = ft.Image(src=f"/icon.png", width=100, height=100, fit=ft.ImageFit.CONTAIN)
+
+    def actualizar_imagen():
+        img.src = f"/uploads/{selected_files.value}"
+        img.update()
+        page.update()
+        print(f"Imagen actualizada {img.src}")
+
     # ####### ROUTE CHANGE ########
     def route_change(route):
+        # Si la ruta es /producto añadimos la vista con el AppBar y un botón para volver a la vista anterior
         if not os.path.exists("data"):
             dt.data_path()
         dt.create_table()
         dt.create_category_table()
         # Borramos las vistas si hubiera alguna
         page.views.clear()
-
+        # Cambiamos el tema de la pagina
         page.theme = ft.Theme(color_scheme=ft.ColorScheme(primary=ft.colors.RED_300))
 
         # #######  HOME ########
+
         # Anadimos la vista principal con la ruta slash y añadimos los controles de la pagina: un appbar
         # y dos botones elevados, uno para añadir productos y otro para buscar por fecha
         page.views.append(
@@ -349,7 +398,11 @@ def main(page: ft.Page):
                 "/",
                 # Añadimos los controles de la pagina
                 [
-                    ft.AppBar(title=ft.Text("Factia"), bgcolor=ft.colors.RED_300),
+                    ft.AppBar(
+                        title=ft.Text("Factia"),
+                        color=ft.colors.WHITE,
+                        bgcolor=ft.colors.RED_300,
+                    ),
                     ft.ElevatedButton(
                         "Anadir Producto",
                         bgcolor=ft.colors.RED_300,
@@ -369,6 +422,7 @@ def main(page: ft.Page):
                 spacing=24,
             )
         )
+
         # ####### PRODUCTO ########
         # Si la ruta es /producto añadimos la vista con el AppBar y un botón para volver a la vista anterior
         if page.route == "/producto":
@@ -382,6 +436,7 @@ def main(page: ft.Page):
                     [
                         ft.AppBar(
                             title=ft.Text("Añadir Producto"),
+                            color=ft.colors.WHITE,
                             bgcolor=ft.colors.RED_300,
                             actions=[
                                 ft.IconButton(
@@ -427,6 +482,28 @@ def main(page: ft.Page):
                             ],
                             alignment=ft.MainAxisAlignment.CENTER,
                         ),
+                        ft.Row(
+                            [
+                                ft.ElevatedButton(
+                                    "Imagen",
+                                    icon=ft.icons.UPLOAD_FILE,
+                                    on_click=lambda _: file_picker.pick_files(
+                                        allow_multiple=False,
+                                        allowed_extensions=["jpg"],
+                                        dialog_title="Selecciona una imagen",
+                                    ),
+                                ),
+                                # ft.ElevatedButton(
+                                #     "Subir Imagen",
+                                #     bgcolor=ft.colors.RED_300,
+                                #     color=ft.colors.WHITE,
+                                #     on_click=upload_files,
+                                # ),
+                                selected_files,
+                                img,
+                            ],
+                            alignment=ft.MainAxisAlignment.CENTER,
+                        ),
                         ft.ElevatedButton(
                             "Añadir Producto",
                             bgcolor=ft.colors.RED_300,
@@ -437,8 +514,10 @@ def main(page: ft.Page):
                     vertical_alignment=ft.MainAxisAlignment.CENTER,
                     horizontal_alignment=ft.CrossAxisAlignment.CENTER,
                     spacing=24,
-                )
+                ),
             )
+            page.update()
+
         # ####### BUSQUEDA ########
         # Si la ruta es /busqueda añadimos la vista con el AppBar y tres botones para
         # seleccionar fechas y volver a la vista anterio
@@ -450,6 +529,7 @@ def main(page: ft.Page):
                         ft.AppBar(
                             title=ft.Text("Busqueda de productos"),
                             bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
                         ),
                         ft.ElevatedButton(
                             "Selecciona fecha Primera",
@@ -477,6 +557,7 @@ def main(page: ft.Page):
                     spacing=24,
                 )
             )
+
         if page.route == "/lista":
             page.views.append(
                 ft.View(
@@ -485,6 +566,7 @@ def main(page: ft.Page):
                         ft.AppBar(
                             title=ft.Text("Lista de productos"),
                             bgcolor=ft.colors.RED_300,
+                            color=ft.colors.WHITE,
                         ),
                         create_list_products(),
                         ft.ListTile(
@@ -523,5 +605,14 @@ def main(page: ft.Page):
     page.go(page.route)
 
 
+secret_key = os.getenv("FLET_SECRET_KEY", default=None)
+if not secret_key:
+    os.environ["FLET_SECRET_KEY"] = os.urandom(12).hex()
+
 # Iniciamos la app
-ft.app(target=main, view=ft.AppView.WEB_BROWSER)
+ft.app(
+    target=main,
+    view=ft.AppView.WEB_BROWSER,
+    assets_dir="assets",
+    upload_dir="assets/uploads",
+)
