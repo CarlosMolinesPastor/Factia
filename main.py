@@ -286,7 +286,7 @@ def main(page: ft.Page):
                 anchor.value,
                 date_buy.value.strftime("%d/%m/%Y"),  # type: ignore
                 date_guarantee.value,
-                "Inagen",
+                img.src,
             )
             # Imprimimos el objeto producto
             print(
@@ -302,7 +302,7 @@ def main(page: ft.Page):
                 product.categoria,
                 product.fecha_compra,
                 product.fecha_vencimiento_garantia,
-                product.imagen,
+                img.src,
             )
             # Ponemos los campos a 0
             product_name.value = ""
@@ -310,6 +310,9 @@ def main(page: ft.Page):
             anchor.value = ""
             txt_number.value = "0"
             date_guarantee.value = ""
+            remove_image(f"{selected_files.value}")
+            img.src = "/icon.png"
+            img.update()
             # Actualizamos la pagina
             page.update()
         else:
@@ -322,11 +325,23 @@ def main(page: ft.Page):
         # add ListView to a page first
         lv = ft.ListView(expand=1, spacing=10, item_extent=50, auto_scroll=True)
         for product in products:
+            dt.convertToImage(product[5], f"assets/uploads/image_{product[0]}.jpg")
             lv.controls.append(
                 ft.Container(
-                    ft.Text(
-                        f"Producto: {product[1]} Categoria: {product[2]} Fecha Compra: {product[3]} Fecha Garantia: {product[4]} \nImagen: {product[5]}",
-                        color=ft.colors.WHITE,
+                    ft.Row(
+                        [
+                            ft.Text(
+                                f"Producto: {product[1]} \nCategoria: {product[2]} \nFecha Compra: {product[3]} Fecha Garantia: {product[4]}",
+                                color=ft.colors.WHITE,
+                            ),
+                            ft.Image(
+                                src=f"assets/uploads/image_{product[0]}.jpg",
+                                width=50,
+                                height=50,
+                                fit=ft.ImageFit.CONTAIN,
+                            ),
+                        ],
+                        alignment=ft.MainAxisAlignment.CENTER,
                     ),
                     bgcolor=ft.colors.RED_300,
                     border=ft.border.all(1, ft.colors.RED_300),
@@ -344,11 +359,11 @@ def main(page: ft.Page):
     ## Funcion para elegir la imagen del producto
     def pick_files_result(e: ft.FilePickerResultEvent):
         selected_files.value = (
-            ", ".join(map(lambda f: f.name, e.files)) if e.files else "Cancelled!"
+            ", ".join(map(lambda f: f.name, e.files)) if e.files else "assets/icon.png"
         )
         selected_files.update()
-        actualizar_imagen()
         upload_files(e)
+        actualizar_imagen()
 
     def upload_files(e):
         uf = []
@@ -366,15 +381,18 @@ def main(page: ft.Page):
     page.overlay.append(file_picker)
     selected_files = ft.Text()
 
+    def remove_image(e):
+        # Remove selected image in files picker
+        os.remove(f"assets/uploads/{e}")
+
     # Imagen por defecto
 
     img = ft.Image(src=f"/icon.png", width=100, height=100, fit=ft.ImageFit.CONTAIN)
 
     def actualizar_imagen():
-        img.src = f"/uploads/{selected_files.value}"
+        img.src = f"assets/uploads/{selected_files.value}"
         img.update()
         page.update()
-        print(f"Imagen actualizada {img.src}")
 
     # ####### ROUTE CHANGE ########
     def route_change(route):
