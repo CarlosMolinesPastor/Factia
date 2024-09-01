@@ -142,3 +142,12 @@ def get_all_categories():
         categories = cursor.fetchall()
         cursor.close()
         return categories
+
+
+def delete_product(id):
+    conexion = sqlite3.connect("data/factia.db")
+    cursor = conexion.cursor()
+    cursor.execute("DELETE FROM product WHERE id = ?", (id,))
+    conexion.commit()
+    cursor.close()
+    print("Producto eliminado de la base de datos -> ", id)

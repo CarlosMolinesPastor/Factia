@@ -6,6 +6,7 @@
 # #    #  # ####   #   ### #  #
 #
 # Importamos el modulo flet
+from re import X
 import flet as ft
 
 # Importamos datetime
@@ -331,14 +332,20 @@ def main(page: ft.Page):
                     ft.Row(
                         [
                             ft.Text(
-                                f"Producto: {product[1]} \nCategoria: {product[2]} \nFecha Compra: {product[3]} Fecha Garantia: {product[4]}",
+                                f"Num: {product[0]} \nProducto: {product[1]} \nCategoria: {product[2]} \nFecha Compra: {product[3]} \nFecha Garantia: {product[4]}",
                                 color=ft.colors.WHITE,
                             ),
                             ft.Image(
                                 src=f"assets/uploads/image_{product[0]}.jpg",
-                                width=50,
-                                height=50,
+                                width=150,
+                                height=150,
                                 fit=ft.ImageFit.CONTAIN,
+                            ),
+                            ft.FloatingActionButton(
+                                icon=ft.icons.DELETE,
+                                bgcolor=ft.colors.WHITE,
+                                # Si clicamos en el boton añadimos la categoria
+                                on_click=lambda _: delete_product(product[0]),
                             ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -348,11 +355,46 @@ def main(page: ft.Page):
                     border_radius=ft.border_radius.all(5),
                     # Al pulsar largo suprimimos el producto
                     # on_long_press=lambda _: dt.delete_product(product[0]),
-                    on_long_press=lambda _: print("Long press"),
+                    on_long_press=lambda _: delete_product(product[0]),
                 )
             )
             page.update()
+            page.route = "/lista"
+            page.update()
         return lv
+
+    ## Funcion para borrar un producto
+
+    def delete_product(e):
+        open_dlg_eliminar()
+        dt.delete_product(e)
+        page.update()
+        page.route = "/lista"
+        page.update()
+        page.route = "/"
+
+    def close_dlg_eliminar(e):
+        dlg_eliminar.open = False
+        page.update()
+
+    def open_dlg_eliminar():
+        page.dialog = dlg_eliminar
+        dlg_eliminar.open = True
+        page.update()
+
+    dlg_eliminar = ft.AlertDialog(
+        modal=True,
+        title=ft.Text("Eliminar Producto"),
+        content=ft.Text("Has eliminado el producto"),
+        actions=[
+            ft.TextButton(
+                "Ok",
+                on_click=close_dlg_eliminar,
+            ),
+        ],
+        actions_alignment=ft.MainAxisAlignment.END,
+        on_dismiss=print("Dialog dismissed"),
+    )
 
     ########### IMAGEN ###########
 
@@ -426,6 +468,12 @@ def main(page: ft.Page):
                         bgcolor=ft.colors.RED_300,
                         color=ft.colors.WHITE,
                         on_click=lambda _: page.go("/producto"),
+                    ),
+                    ft.ElevatedButton(
+                        "Lista de Productos",
+                        bgcolor=ft.colors.RED_300,
+                        color=ft.colors.WHITE,
+                        on_click=lambda _: page.go("/lista"),
                     ),
                     ft.ElevatedButton(
                         "Busqueda por Fecha",
@@ -586,12 +634,11 @@ def main(page: ft.Page):
                             bgcolor=ft.colors.RED_300,
                             color=ft.colors.WHITE,
                         ),
-                        create_list_products(),
                         ft.ListTile(
                             title=ft.Text("Productos"),
-                            on_click=lambda _: page.go("/lista"),
-                            data=create_list_products(),
+                            on_click=lambda _: page.go("/producto"),
                         ),
+                        create_list_products(),
                         ft.ElevatedButton(
                             "Go Home",
                             bgcolor=ft.colors.RED_300,
