@@ -6,7 +6,6 @@
 # #    #  # ####   #   ### #  #
 #
 # Importamos el modulo flet
-from re import X
 import flet as ft
 
 # Importamos datetime
@@ -266,7 +265,19 @@ def main(page: ft.Page):
         value="",
     )
 
-    # Funcion para validar los campos
+    # Creamos un TextField para mostrar la fecha de garantia en formato iso
+    date_guarantee_iso = ft.TextField(
+        value="",
+    )
+
+    # Funcion para cambiar el formato de la fecha de garantia
+    def change_date_guarantee_to_iso():
+        date_guarantee_iso.value = calculate_guarantee_date().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+    # Funcion de comprobacion: Si todo es correcto cambiamos el formato de la fecha de garantia
+    # y devolvemos True
     def var_are_valid():
         if (
             product_name.value != ""
@@ -274,6 +285,7 @@ def main(page: ft.Page):
             and date_guarantee.value
             and anchor.value != ""
         ):
+            change_date_guarantee_to_iso()
             return True
 
     # Funcion para añadir el producto
@@ -286,7 +298,7 @@ def main(page: ft.Page):
                 product_name.value,
                 anchor.value,
                 date_buy.value,
-                date_guarantee.value,
+                date_guarantee_iso.value,
                 img.src,
             )
             # Imprimimos el objeto producto
