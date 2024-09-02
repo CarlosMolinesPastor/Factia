@@ -285,7 +285,7 @@ def main(page: ft.Page):
             product = pr.Producto(
                 product_name.value,
                 anchor.value,
-                date_buy.value.strftime("%d/%m/%Y"),  # type: ignore
+                date_buy.value,
                 date_guarantee.value,
                 img.src,
             )
@@ -314,6 +314,7 @@ def main(page: ft.Page):
             remove_image(f"{selected_files.value}")
             img.src = "/icon.png"
             img.update()
+            page.route = "/producto"
             # Actualizamos la pagina
             page.update()
         else:
@@ -344,7 +345,6 @@ def main(page: ft.Page):
                             ft.FloatingActionButton(
                                 icon=ft.icons.DELETE,
                                 bgcolor=ft.colors.WHITE,
-                                # Si clicamos en el boton añadimos la categoria
                                 on_click=lambda _: delete_product(product[0]),
                             ),
                         ],
