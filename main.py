@@ -158,20 +158,29 @@ def main(page: ft.Page):
 
     # Funcion para añadir la categoria
     def add_category(category):
-        # Añadimos la categoria a la base de datos
-        dt.add_category(category)
-        # Añadimos la categoria al anchor para actualizar la vista
-        anchor.controls.append(
-            ft.ListTile(
-                title=ft.Text(category),
-                on_click=close_anchor,
-                data=(category),
+        # Añadimos la categoria a la base de dato
+        if comprove_category():
+            dt.add_category(category)
+            # Añadimos la categoria al anchor para actualizar la vista
+            anchor.controls.append(
+                ft.ListTile(
+                    title=ft.Text(category),
+                    on_click=close_anchor,
+                    data=(category),
+                )
             )
-        )
-        # Actualizamos el anchor\
-        anchor.update()
-        # Cerramos la vista de la categoria
-        anchor.close_view(category)
+            # Actualizamos el anchor\
+            anchor.update()
+            # Cerramos la vista de la categoria
+            anchor.close_view(category)
+
+    def comprove_category():
+        if anchor.value == "":
+            print("No hay categoria")
+            return False
+        else:
+            print("Categoria seleccionada")
+            return True
 
     # Creamos un anchor para seleccionar la categoria
     anchor = ft.SearchBar(
@@ -288,6 +297,10 @@ def main(page: ft.Page):
             change_date_guarantee_to_iso()
             return True
 
+    img = ft.Image(
+        src=f"assets/icon.png", width=100, height=100, fit=ft.ImageFit.CONTAIN
+    )
+
     # Funcion para añadir el producto
     def add_product(e):
         # Validamos los campos
@@ -320,14 +333,15 @@ def main(page: ft.Page):
             # Ponemos los campos a 0
             product_name.value = ""
             show_date.value = ""
-            anchor.value = ""
             txt_number.value = "0"
             date_guarantee.value = ""
-            remove_image(f"{selected_files.value}")
-            img.src = "/icon.png"
+            if img.src != "assets/icon.png":
+                remove_image(f"{selected_files.value}")
+            img.src = "assets/icon.png"
             img.update()
             page.route = "/producto"
-            # Actualizamos la pagina
+            lvg.controls.clear()
+            lvg.controls.append(create_list_products())
             page.update()
         else:
             print("Faltan datos")
@@ -336,7 +350,9 @@ def main(page: ft.Page):
     ## Funcion para crear lista de productos
     def create_list_products():
         products = dt.get_all_products()
-        # add ListView to a page first
+        # Creamos la carpeta uploads si no existe
+        if not os.path.exists("assets/uploads"):
+            os.makedirs("assets/uploads")
         lv = ft.ListView(expand=1, spacing=10, item_extent=50, auto_scroll=True)
         for product in products:
             dt.convertToImage(product[5], f"assets/uploads/image_{product[0]}.jpg")
@@ -357,7 +373,11 @@ def main(page: ft.Page):
                             ft.FloatingActionButton(
                                 icon=ft.icons.DELETE,
                                 bgcolor=ft.colors.WHITE,
-                                on_click=lambda _: delete_product(product[0]),
+                                data=product[0],
+                                on_click=lambda e: (
+                                    print(f"Producto a eliminar: {e.control.data}"),
+                                    delete_product(e.control.data),
+                                ),
                             ),
                         ],
                         alignment=ft.MainAxisAlignment.CENTER,
@@ -367,23 +387,27 @@ def main(page: ft.Page):
                     border_radius=ft.border_radius.all(5),
                     # Al pulsar largo suprimimos el producto
                     # on_long_press=lambda _: dt.delete_product(product[0]),
-                    on_long_press=lambda _: delete_product(product[0]),
+                    on_long_press=lambda _: print(f"Producto a eliminar: {product[0]}"),
                 )
             )
-            page.update()
-            page.route = "/lista"
+            # page.update()
+            # page.route = "/lista"
             page.update()
         return lv
+
+    lvg = create_list_products()
 
     ## Funcion para borrar un producto
 
     def delete_product(e):
+        print(f"Producto a eliminar: {e}")
         open_dlg_eliminar()
         dt.delete_product(e)
+        lvg.controls.clear()
+        lvg.controls.append(create_list_products())
+        # Borrar la imagen
+        os.remove(f"assets/uploads/image_{e}.jpg")
         page.update()
-        page.route = "/lista"
-        page.update()
-        page.route = "/"
 
     def close_dlg_eliminar(e):
         dlg_eliminar.open = False
@@ -440,8 +464,6 @@ def main(page: ft.Page):
         os.remove(f"assets/uploads/{e}")
 
     # Imagen por defecto
-
-    img = ft.Image(src=f"/icon.png", width=100, height=100, fit=ft.ImageFit.CONTAIN)
 
     def actualizar_imagen():
         img.src = f"assets/uploads/{selected_files.value}"
@@ -650,7 +672,8 @@ def main(page: ft.Page):
                             title=ft.Text("Productos"),
                             on_click=lambda _: page.go("/producto"),
                         ),
-                        create_list_products(),
+                        lvg,
+                        # create_list_products(),
                         ft.ElevatedButton(
                             "Go Home",
                             bgcolor=ft.colors.RED_300,
